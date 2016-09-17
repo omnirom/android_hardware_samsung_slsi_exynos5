@@ -37,7 +37,7 @@
 
 #include "Connection.h"
 
-//#define LOG_VERBOSE
+#define LOG_VERBOSE
 #include "log.h"
 
 

@@ -30,6 +30,8 @@
 
 #include <UniquePtr.h>
 
+#define LOG_NDEBUG 0
+
 #define LOG_TAG "ExynosKeyMaster"
 #include <cutils/log.h>
 

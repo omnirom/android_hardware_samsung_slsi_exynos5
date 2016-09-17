@@ -43,7 +43,7 @@
 #include "ExynosVideoDec.h"
 #include "OMX_Core.h"
 
-/* #define LOG_NDEBUG 0 */
+#define LOG_NDEBUG 0
 #define LOG_TAG "ExynosVideoDecoder"
 #include <utils/Log.h>
 

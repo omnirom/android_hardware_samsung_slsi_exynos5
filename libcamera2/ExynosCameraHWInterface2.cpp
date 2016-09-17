@@ -31,7 +31,7 @@
  *
  */
 
-//#define LOG_NDEBUG 0
+#define LOG_NDEBUG 0
 #define LOG_TAG "ExynosCameraHAL2"
 #include <sys/time.h>
 #include <utils/Log.h>
@@ -44,6 +44,7 @@ namespace android {
 
 void m_savePostView(const char *fname, uint8_t *buf, uint32_t size)
 {
+    ALOGV("%s", __FUNCTION__);
     int nw;
     int cnt = 0;
     uint32_t written = 0;
@@ -71,6 +72,7 @@ void m_savePostView(const char *fname, uint8_t *buf, uint32_t size)
 
 int get_pixel_depth(uint32_t fmt)
 {
+    ALOGV("%s", __FUNCTION__);
     int depth = 0;
 
     switch (fmt) {
@@ -114,6 +116,7 @@ int get_pixel_depth(uint32_t fmt)
 
 int cam_int_s_fmt(node_info_t *node)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     struct v4l2_format v4l2_fmt;
     unsigned int framesize;
     int ret;
@@ -138,12 +141,13 @@ int cam_int_s_fmt(node_info_t *node)
     if (ret < 0)
         ALOGE("%s: exynos_v4l2_s_fmt fail (%d)",__FUNCTION__, ret);
 
-
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 int cam_int_reqbufs(node_info_t *node)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     struct v4l2_requestbuffers req;
     int ret;
 
@@ -156,11 +160,13 @@ int cam_int_reqbufs(node_info_t *node)
     if (ret < 0)
         ALOGE("%s: VIDIOC_REQBUFS (fd:%d) failed (%d)",__FUNCTION__,node->fd, ret);
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return req.count;
 }
 
 int cam_int_qbuf(node_info_t *node, int index)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     struct v4l2_buffer v4l2_buf;
     struct v4l2_plane planes[VIDEO_MAX_PLANES];
     int i;
@@ -182,11 +188,13 @@ int cam_int_qbuf(node_info_t *node, int index)
     if (ret < 0)
         ALOGE("%s: cam_int_qbuf failed (index:%d)(ret:%d)",__FUNCTION__, index, ret);
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 int cam_int_streamon(node_info_t *node)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     enum v4l2_buf_type type = node->type;
     int ret;
 
@@ -198,11 +206,13 @@ int cam_int_streamon(node_info_t *node)
 
     ALOGV("On streaming I/O... ... fd(%d)", node->fd);
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 int cam_int_streamoff(node_info_t *node)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
     int ret;
 
@@ -213,11 +223,13 @@ int cam_int_streamoff(node_info_t *node)
     if (ret < 0)
         ALOGE("%s: VIDIOC_STREAMOFF failed (%d)",__FUNCTION__, ret);
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 int isp_int_streamoff(node_info_t *node)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
     int ret;
 
@@ -227,11 +239,13 @@ int isp_int_streamoff(node_info_t *node)
     if (ret < 0)
         ALOGE("%s: VIDIOC_STREAMOFF failed (%d)",__FUNCTION__, ret);
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 int cam_int_dqbuf(node_info_t *node)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     struct v4l2_buffer v4l2_buf;
     struct v4l2_plane planes[VIDEO_MAX_PLANES];
     int ret;
@@ -245,11 +259,13 @@ int cam_int_dqbuf(node_info_t *node)
     if (ret < 0)
         ALOGE("%s: VIDIOC_DQBUF failed (%d)",__FUNCTION__, ret);
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return v4l2_buf.index;
 }
 
 int cam_int_dqbuf(node_info_t *node, int num_plane)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     struct v4l2_buffer v4l2_buf;
     struct v4l2_plane planes[VIDEO_MAX_PLANES];
     int ret;
@@ -263,17 +279,20 @@ int cam_int_dqbuf(node_info_t *node, int num_plane)
     if (ret < 0)
         ALOGE("%s: VIDIOC_DQBUF failed (%d)",__FUNCTION__, ret);
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return v4l2_buf.index;
 }
 
 int cam_int_s_input(node_info_t *node, int index)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     int ret;
 
     ret = exynos_v4l2_s_input(node->fd, index);
     if (ret < 0)
         ALOGE("%s: VIDIOC_S_INPUT failed (%d)",__FUNCTION__, ret);
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
@@ -289,10 +308,14 @@ RequestManager::RequestManager(SignalDrivenThread* main_thread):
     m_lastAeComp(0),
     m_vdisBubbleEn(false)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
+
     m_metadataConverter = new MetadataConverter;
     m_mainThread = main_thread;
     ResetEntry();
     m_sensorPipelineSkipCnt = 0;
+
+    ALOGV("EXIT %s", __FUNCTION__);
     return;
 }
 
@@ -310,6 +333,7 @@ RequestManager::~RequestManager()
 
 void RequestManager::ResetEntry()
 {
+    ALOGV("%s", __FUNCTION__);
     Mutex::Autolock lock(m_requestMutex);
     Mutex::Autolock lock2(m_numOfEntriesLock);
     for (int i=0 ; i<NUM_MAX_REQUEST_MGR_ENTRY; i++) {
@@ -324,17 +348,20 @@ void RequestManager::ResetEntry()
 
 int RequestManager::GetNumEntries()
 {
+    ALOGV("%s", __FUNCTION__);
     Mutex::Autolock lock(m_numOfEntriesLock);
     return m_numOfEntries;
 }
 
 void RequestManager::SetDefaultParameters(int cropX)
 {
+    ALOGV("%s", __FUNCTION__);
     m_cropX = cropX;
 }
 
 bool RequestManager::IsRequestQueueFull()
 {
+    ALOGV("%s", __FUNCTION__);
     Mutex::Autolock lock(m_requestMutex);
     Mutex::Autolock lock2(m_numOfEntriesLock);
     if (m_numOfEntries>=NUM_MAX_REQUEST_MGR_ENTRY)
@@ -454,6 +481,8 @@ bool RequestManager::PrepareFrame(size_t* num_entries, size_t* frame_size,
 
 int RequestManager::MarkProcessingRequest(ExynosBuffer* buf)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     struct camera2_shot_ext * shot_ext;
     struct camera2_shot_ext * request_shot;
     int targetStreamIndex = 0;
@@ -564,17 +593,23 @@ void RequestManager::CheckCompleted(int index)
 
 int RequestManager::GetCompletedIndex()
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     return FindEntryIndexByFrameCnt(m_lastCompletedFrameCnt + 1);
 }
 
 void  RequestManager::pushSensorQ(int index)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     Mutex::Autolock lock(m_requestMutex);
     m_sensorQ.push_back(index);
 }
 
 int RequestManager::popSensorQ()
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
    List<int>::iterator sensor_token;
    int index;
 
@@ -592,6 +627,8 @@ int RequestManager::popSensorQ()
 
 void RequestManager::releaseSensorQ()
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     List<int>::iterator r;
 
     Mutex::Autolock lock(m_requestMutex);
@@ -606,6 +643,8 @@ void RequestManager::releaseSensorQ()
 
 void RequestManager::ApplyDynamicMetadata(struct camera2_shot_ext *shot_ext)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     int index;
     struct camera2_shot_ext * request_shot;
     nsecs_t timeStamp;
@@ -644,6 +683,8 @@ void RequestManager::ApplyDynamicMetadata(struct camera2_shot_ext *shot_ext)
 
 void    RequestManager::UpdateIspParameters(struct camera2_shot_ext *shot_ext, int frameCnt, ctl_request_info_t *ctl_info)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     int index, targetStreamIndex;
     struct camera2_shot_ext * request_shot;
 
@@ -759,11 +800,15 @@ void    RequestManager::UpdateIspParameters(struct camera2_shot_ext *shot_ext, i
 
 bool    RequestManager::IsVdisEnable(void)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
         return m_vdisBubbleEn;
 }
 
 int     RequestManager::FindEntryIndexByFrameCnt(int frameCnt)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     for (int i = 0 ; i < NUM_MAX_REQUEST_MGR_ENTRY ; i++) {
         if ((int)entries[i].internal_shot.shot.ctl.request.frameCount == frameCnt)
             return i;
@@ -773,6 +818,8 @@ int     RequestManager::FindEntryIndexByFrameCnt(int frameCnt)
 
 void    RequestManager::RegisterTimestamp(int frameCnt, nsecs_t * frameTime)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     int index = FindEntryIndexByFrameCnt(frameCnt);
     if (index == -1) {
         ALOGE("ERR(%s): Cannot find entry for frameCnt(%d)", __FUNCTION__, frameCnt);
@@ -793,6 +840,8 @@ void    RequestManager::RegisterTimestamp(int frameCnt, nsecs_t * frameTime)
 
 nsecs_t  RequestManager::GetTimestampByFrameCnt(int frameCnt)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     int index = FindEntryIndexByFrameCnt(frameCnt);
     if (index == -1) {
         ALOGE("ERR(%s): Cannot find entry for frameCnt(%d) returning saved time(%lld)", __FUNCTION__, frameCnt, m_lastTimeStamp);
@@ -804,6 +853,8 @@ nsecs_t  RequestManager::GetTimestampByFrameCnt(int frameCnt)
 
 nsecs_t  RequestManager::GetTimestamp(int index)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     Mutex::Autolock lock(m_requestMutex);
     if (index < 0 || index >= NUM_MAX_REQUEST_MGR_ENTRY) {
         ALOGE("ERR(%s): Request entry outside of bounds (%d)", __FUNCTION__, index);
@@ -822,6 +873,8 @@ nsecs_t  RequestManager::GetTimestamp(int index)
 
 uint8_t  RequestManager::GetOutputStreamByFrameCnt(int frameCnt)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     int index = FindEntryIndexByFrameCnt(frameCnt);
     if (index == -1) {
         ALOGE("ERR(%s): Cannot find entry for frameCnt(%d)", __FUNCTION__, frameCnt);
@@ -833,6 +886,8 @@ uint8_t  RequestManager::GetOutputStreamByFrameCnt(int frameCnt)
 
 uint8_t  RequestManager::GetOutputStream(int index)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     Mutex::Autolock lock(m_requestMutex);
     if (index < 0 || index >= NUM_MAX_REQUEST_MGR_ENTRY) {
         ALOGE("ERR(%s): Request entry outside of bounds (%d)", __FUNCTION__, index);
@@ -845,6 +900,8 @@ uint8_t  RequestManager::GetOutputStream(int index)
 
 camera2_shot_ext *  RequestManager::GetInternalShotExtByFrameCnt(int frameCnt)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     int index = FindEntryIndexByFrameCnt(frameCnt);
     if (index == -1) {
         ALOGE("ERR(%s): Cannot find entry for frameCnt(%d)", __FUNCTION__, frameCnt);
@@ -856,6 +913,8 @@ camera2_shot_ext *  RequestManager::GetInternalShotExtByFrameCnt(int frameCnt)
 
 camera2_shot_ext *  RequestManager::GetInternalShotExt(int index)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     Mutex::Autolock lock(m_requestMutex);
     if (index < 0 || index >= NUM_MAX_REQUEST_MGR_ENTRY) {
         ALOGE("ERR(%s): Request entry outside of bounds (%d)", __FUNCTION__, index);
@@ -868,6 +927,8 @@ camera2_shot_ext *  RequestManager::GetInternalShotExt(int index)
 
 int     RequestManager::FindFrameCnt(struct camera2_shot_ext * shot_ext, bool drain)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     Mutex::Autolock lock(m_requestMutex);
     Mutex::Autolock lock2(m_numOfEntriesLock);
     int i;
@@ -914,6 +975,8 @@ int     RequestManager::GetSkipCnt()
 
 void RequestManager::Dump(void)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     int i = 0;
     request_manager_entry * currentEntry;
     Mutex::Autolock lock(m_numOfEntriesLock);
@@ -931,6 +994,8 @@ void RequestManager::Dump(void)
 
 int     RequestManager::GetNextIndex(int index)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     index++;
     if (index >= NUM_MAX_REQUEST_MGR_ENTRY)
         index = 0;
@@ -940,6 +1005,8 @@ int     RequestManager::GetNextIndex(int index)
 
 int     RequestManager::GetPrevIndex(int index)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     index--;
     if (index < 0)
         index = NUM_MAX_REQUEST_MGR_ENTRY-1;
@@ -1203,6 +1270,8 @@ void ExynosCameraHWInterface2::release()
 
 int ExynosCameraHWInterface2::InitializeISPChain()
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     char node_name[30];
     int fd = 0;
     int i;
@@ -1476,7 +1545,9 @@ void ExynosCameraHWInterface2::StartSCCThread(bool threadExists)
 void ExynosCameraHWInterface2::StartISP()
 {
     ALOGV("== stream_on :: isp");
+    ALOGV("cam_int_streamon");
     cam_int_streamon(&(m_camera_info.isp));
+    ALOGV("exynos_v4l2_s_ctrl");
     exynos_v4l2_s_ctrl(m_camera_info.sensor.fd, V4L2_CID_IS_S_STREAM, IS_ENABLE_STREAM);
 }
 
@@ -1641,6 +1712,8 @@ int ExynosCameraHWInterface2::setFrameQueueDstOps(const camera2_frame_queue_dst_
 
 int ExynosCameraHWInterface2::getInProgressCount()
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     int inProgressJpeg;
     int inProgressCount;
 
@@ -1656,6 +1729,7 @@ int ExynosCameraHWInterface2::getInProgressCount()
 
 int ExynosCameraHWInterface2::flushCapturesInProgress()
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
     return 0;
 }
 
@@ -1690,6 +1764,8 @@ int ExynosCameraHWInterface2::constructDefaultRequest(int request_template, came
 int ExynosCameraHWInterface2::allocateStream(uint32_t width, uint32_t height, int format, const camera2_stream_ops_t *stream_ops,
                                     uint32_t *stream_id, uint32_t *format_actual, uint32_t *usage, uint32_t *max_buffers)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     ALOGD("(%s): stream width(%d) height(%d) format(%x)", __FUNCTION__,  width, height, format);
     bool useDirectOutput = false;
     StreamThread *AllocatedStream;
@@ -2024,6 +2100,7 @@ int ExynosCameraHWInterface2::allocateStream(uint32_t width, uint32_t height, in
 int ExynosCameraHWInterface2::registerStreamBuffers(uint32_t stream_id,
         int num_buffers, buffer_handle_t *registeringBuffers)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
     int                     i,j;
     void                    *virtAddr[3];
     int                     plane_index = 0;
@@ -2208,6 +2285,7 @@ int ExynosCameraHWInterface2::registerStreamBuffers(uint32_t stream_id,
 
 int ExynosCameraHWInterface2::releaseStream(uint32_t stream_id)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
     StreamThread *targetStream;
     status_t res = NO_ERROR;
     ALOGD("(%s): stream_id(%d)", __FUNCTION__, stream_id);
@@ -2373,6 +2451,7 @@ int ExynosCameraHWInterface2::allocateReprocessStreamFromStream(
             // outputs
             uint32_t *stream_id)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
     ALOGD("(%s): output_stream_id(%d)", __FUNCTION__, output_stream_id);
     *stream_id = STREAM_ID_JPEG_REPROCESS;
 
@@ -2384,6 +2463,7 @@ int ExynosCameraHWInterface2::allocateReprocessStreamFromStream(
 
 int ExynosCameraHWInterface2::releaseReprocessStream(uint32_t stream_id)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
     ALOGD("(%s): stream_id(%d)", __FUNCTION__, stream_id);
     if (stream_id == STREAM_ID_JPEG_REPROCESS) {
         m_reprocessStreamId = 0;
@@ -2396,6 +2476,7 @@ int ExynosCameraHWInterface2::releaseReprocessStream(uint32_t stream_id)
 
 int ExynosCameraHWInterface2::triggerAction(uint32_t trigger_id, int ext1, int ext2)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
     Mutex::Autolock lock(m_afModeTriggerLock);
     ALOGV("DEBUG(%s): id(%x), %d, %d", __FUNCTION__, trigger_id, ext1, ext2);
 
@@ -2442,6 +2523,8 @@ int ExynosCameraHWInterface2::dump(int /*fd*/)
 
 void ExynosCameraHWInterface2::m_getAlignedYUVSize(int colorFormat, int w, int h, ExynosBuffer *buf)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     switch (colorFormat) {
     // 1p
     case V4L2_PIX_FMT_RGB565 :
@@ -2505,6 +2588,8 @@ bool ExynosCameraHWInterface2::m_getRatioSize(int  src_w,  int   src_h,
                                              int *crop_w, int *crop_h,
                                              int zoom)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     *crop_w = src_w;
     *crop_h = src_h;
 
@@ -2659,6 +2744,8 @@ int    BayerBufManager::MarkSensorDequeue(int index, int reqFrameCnt, nsecs_t* /
 
 int     BayerBufManager::GetIndexForIspEnqueue(int *reqFrameCnt)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     int ret = 0;
     if (numOnHalFilled == 0)
         ret = -1;
@@ -2758,6 +2845,8 @@ int     BayerBufManager::GetNextIndex(int index)
 
 void ExynosCameraHWInterface2::m_mainThreadFunc(SignalDrivenThread * self)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     camera_metadata_t *currentRequest = NULL;
     camera_metadata_t *currentFrame = NULL;
     size_t numEntries = 0;
@@ -2889,6 +2978,8 @@ void ExynosCameraHWInterface2::DumpInfoWithShot(struct camera2_shot_ext * shot_e
 
 void ExynosCameraHWInterface2::m_preCaptureSetter(struct camera2_shot_ext * shot_ext)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     // Flash
     switch (m_ctlInfo.flash.m_flashCnt) {
     case IS_FLASH_STATE_ON:
@@ -2978,6 +3069,7 @@ void ExynosCameraHWInterface2::m_preCaptureSetter(struct camera2_shot_ext * shot
 
 void ExynosCameraHWInterface2::m_preCaptureListenerSensor(struct camera2_shot_ext * shot_ext)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
     // Flash
     switch (m_ctlInfo.flash.m_flashCnt) {
     case IS_FLASH_STATE_AUTO_WAIT:
@@ -2999,6 +3091,7 @@ void ExynosCameraHWInterface2::m_preCaptureListenerSensor(struct camera2_shot_ex
 
 void ExynosCameraHWInterface2::m_preCaptureListenerISP(struct camera2_shot_ext * shot_ext)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
     // Flash
     switch (m_ctlInfo.flash.m_flashCnt) {
     case IS_FLASH_STATE_ON_WAIT:
@@ -3050,6 +3143,7 @@ void ExynosCameraHWInterface2::m_preCaptureListenerISP(struct camera2_shot_ext *
 
 void ExynosCameraHWInterface2::m_preCaptureAeState(struct camera2_shot_ext * shot_ext)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
     switch (m_ctlInfo.flash.i_flashMode) {
     case AA_AEMODE_ON:
         // At flash off mode, capture can be done as zsl capture
@@ -3067,6 +3161,7 @@ void ExynosCameraHWInterface2::m_preCaptureAeState(struct camera2_shot_ext * sho
 
 void ExynosCameraHWInterface2::m_updateAfRegion(struct camera2_shot_ext * shot_ext)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
     shot_ext->shot.ctl.aa.afRegions[0] = currentAfRegion[0];
     shot_ext->shot.ctl.aa.afRegions[1] = currentAfRegion[1];
     shot_ext->shot.ctl.aa.afRegions[2] = currentAfRegion[2];
@@ -3075,6 +3170,7 @@ void ExynosCameraHWInterface2::m_updateAfRegion(struct camera2_shot_ext * shot_e
 
 void ExynosCameraHWInterface2::SetAfRegion(uint32_t * afRegion)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
     currentAfRegion[0] = afRegion[0];
     currentAfRegion[1] = afRegion[1];
     currentAfRegion[2] = afRegion[2];
@@ -3083,6 +3179,7 @@ void ExynosCameraHWInterface2::SetAfRegion(uint32_t * afRegion)
 
 void ExynosCameraHWInterface2::m_afTrigger(struct camera2_shot_ext * shot_ext, int mode)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
     if (m_afState == HAL_AFSTATE_SCANNING) {
         ALOGD("(%s): restarting trigger ", __FUNCTION__);
     } else if (!mode) {
@@ -3632,6 +3729,7 @@ void ExynosCameraHWInterface2::m_sensorThreadFunc(SignalDrivenThread * self)
 
 void ExynosCameraHWInterface2::m_streamBufferInit(SignalDrivenThread *self)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
     uint32_t                currentSignal   = self->GetProcessingSignal();
     StreamThread *          selfThread      = ((StreamThread*)self);
     stream_parameters_t     *selfStreamParms =  &(selfThread->m_parameters);
@@ -3774,6 +3872,7 @@ void ExynosCameraHWInterface2::m_streamThreadInitialize(SignalDrivenThread * sel
 int ExynosCameraHWInterface2::m_runSubStreamFunc(StreamThread *selfThread, ExynosBuffer *srcImageBuf,
     int stream_id, nsecs_t frameTimeStamp)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
     substream_parameters_t  *subParms = &m_subStreams[stream_id];
 
     switch (stream_id) {
@@ -3793,6 +3892,7 @@ int ExynosCameraHWInterface2::m_runSubStreamFunc(StreamThread *selfThread, Exyno
 }
 void ExynosCameraHWInterface2::m_streamFunc_direct(SignalDrivenThread *self)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
     uint32_t                currentSignal   = self->GetProcessingSignal();
     StreamThread *          selfThread      = ((StreamThread*)self);
     stream_parameters_t     *selfStreamParms =  &(selfThread->m_parameters);
@@ -4072,6 +4172,7 @@ void ExynosCameraHWInterface2::m_streamFunc_indirect(SignalDrivenThread *self)
     stream_parameters_t     *selfStreamParms =  &(selfThread->m_parameters);
     node_info_t             *currentNode    = selfStreamParms->node;
 
+    ALOGV("DEBUG(%s)", __FUNCTION__);
 
     if (currentSignal & SIGNAL_THREAD_RELEASE) {
         CAM_LOGV("(%s): [%d] START SIGNAL_THREAD_RELEASE", __FUNCTION__, selfThread->m_index);
@@ -4682,6 +4783,7 @@ bool ExynosCameraHWInterface2::m_checkThumbnailSize(int w, int h)
 {
     int sizeOfSupportList;
 
+    ALOGV("DEBUG(%s)", __FUNCTION__);
     //REAR Camera
     if(this->getCameraId() == 0) {
         sizeOfSupportList = sizeof(SUPPORT_THUMBNAIL_REAR_SIZE) / (sizeof(int32_t)*2);
@@ -4708,6 +4810,8 @@ bool ExynosCameraHWInterface2::yuv2Jpeg(ExynosBuffer *yuvBuf,
                             ExynosRect *rect)
 {
     unsigned char *addr;
+
+    ALOGV("DEBUG(%s)", __FUNCTION__);
 
     ExynosJpegEncoderForCamera jpegEnc;
     bool ret = false;
@@ -4801,6 +4905,8 @@ jpeg_encode_done:
 
 void ExynosCameraHWInterface2::OnPrecaptureMeteringTriggerStart(int id)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     m_ctlInfo.flash.m_precaptureTriggerId = id;
     m_ctlInfo.ae.aeStateNoti = AE_STATE_INACTIVE;
     if ((m_ctlInfo.flash.i_flashMode >= AA_AEMODE_ON_AUTO_FLASH) && (m_cameraId == 0)) {
@@ -4829,6 +4935,8 @@ void ExynosCameraHWInterface2::OnPrecaptureMeteringTriggerStart(int id)
 void ExynosCameraHWInterface2::OnAfTrigger(int id)
 {
     m_afTriggerId = id;
+
+    ALOGV("DEBUG(%s)", __FUNCTION__);
 
     switch (m_afMode) {
     case AA_AFMODE_AUTO:
@@ -4866,6 +4974,8 @@ void ExynosCameraHWInterface2::OnAfTriggerAutoMacro(int /*id*/)
 {
     int nextState = NO_TRANSITION;
 
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     switch (m_afState) {
     case HAL_AFSTATE_INACTIVE:
     case HAL_AFSTATE_PASSIVE_FOCUSED:
@@ -4898,6 +5008,8 @@ void ExynosCameraHWInterface2::OnAfTriggerAutoMacro(int /*id*/)
 void ExynosCameraHWInterface2::OnAfTriggerCAFPicture(int id)
 {
     int nextState = NO_TRANSITION;
+
+    ALOGV("DEBUG(%s)", __FUNCTION__);
 
     switch (m_afState) {
     case HAL_AFSTATE_INACTIVE:
@@ -4961,6 +5073,8 @@ void ExynosCameraHWInterface2::OnAfTriggerCAFVideo(int /*id*/)
 {
     int nextState = NO_TRANSITION;
 
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     switch (m_afState) {
     case HAL_AFSTATE_INACTIVE:
         nextState = HAL_AFSTATE_FAILED;
@@ -5003,6 +5117,8 @@ void ExynosCameraHWInterface2::OnAfTriggerCAFVideo(int /*id*/)
 
 void ExynosCameraHWInterface2::OnPrecaptureMeteringNotificationSensor()
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     if (m_ctlInfo.flash.m_precaptureTriggerId > 0) {
         // Just noti of pre-capture start
         if (m_ctlInfo.ae.aeStateNoti != AE_STATE_PRECAPTURE) {
@@ -5020,6 +5136,8 @@ void ExynosCameraHWInterface2::OnPrecaptureMeteringNotificationSensor()
 
 void ExynosCameraHWInterface2::OnPrecaptureMeteringNotificationISP()
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     if (m_ctlInfo.flash.m_precaptureTriggerId > 0) {
         if (m_ctlInfo.flash.m_flashEnableFlg) {
             // flash case
@@ -5080,6 +5198,8 @@ void ExynosCameraHWInterface2::OnPrecaptureMeteringNotificationISP()
 
 void ExynosCameraHWInterface2::OnAfNotification(enum aa_afstate noti)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     switch (m_afMode) {
     case AA_AFMODE_AUTO:
     case AA_AFMODE_MACRO:
@@ -5099,6 +5219,8 @@ void ExynosCameraHWInterface2::OnAfNotification(enum aa_afstate noti)
 
 void ExynosCameraHWInterface2::OnAfNotificationAutoMacro(enum aa_afstate noti)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     int nextState = NO_TRANSITION;
     bool bWrongTransition = false;
 
@@ -5231,6 +5353,8 @@ void ExynosCameraHWInterface2::OnAfNotificationCAFPicture(enum aa_afstate noti)
 {
     int nextState = NO_TRANSITION;
     bool bWrongTransition = false;
+
+    ALOGV("DEBUG(%s)", __FUNCTION__);
 
     if (m_afState == HAL_AFSTATE_INACTIVE) {
         switch (noti) {
@@ -5444,6 +5568,8 @@ void ExynosCameraHWInterface2::OnAfNotificationCAFVideo(enum aa_afstate noti)
     int nextState = NO_TRANSITION;
     bool bWrongTransition = false;
 
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     if (m_afState == HAL_AFSTATE_INACTIVE) {
         switch (noti) {
         case AA_AFSTATE_INACTIVE:
@@ -5586,6 +5712,8 @@ void ExynosCameraHWInterface2::OnAfCancel(int id)
 {
     m_afTriggerId = id;
 
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     switch (m_afMode) {
     case AA_AFMODE_AUTO:
     case AA_AFMODE_MACRO:
@@ -5607,6 +5735,8 @@ void ExynosCameraHWInterface2::OnAfCancel(int id)
 void ExynosCameraHWInterface2::OnAfCancelAutoMacro(int /*id*/)
 {
     int nextState = NO_TRANSITION;
+
+    ALOGV("DEBUG(%s)", __FUNCTION__);
 
     if (m_ctlInfo.flash.m_flashEnableFlg  && m_ctlInfo.flash.m_afFlashDoneFlg) {
         m_ctlInfo.flash.m_flashCnt = IS_FLASH_STATE_AUTO_OFF;
@@ -5637,6 +5767,8 @@ void ExynosCameraHWInterface2::OnAfCancelCAFPicture(int /*id*/)
 {
     int nextState = NO_TRANSITION;
 
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     switch (m_afState) {
     case HAL_AFSTATE_INACTIVE:
         nextState = NO_TRANSITION;
@@ -5665,6 +5797,8 @@ void ExynosCameraHWInterface2::OnAfCancelCAFVideo(int /*id*/)
 {
     int nextState = NO_TRANSITION;
 
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     switch (m_afState) {
     case HAL_AFSTATE_INACTIVE:
         nextState = NO_TRANSITION;
@@ -5691,6 +5825,8 @@ void ExynosCameraHWInterface2::OnAfCancelCAFVideo(int /*id*/)
 
 void ExynosCameraHWInterface2::SetAfStateForService(int newState)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     if (m_serviceAfState != newState || newState == 0)
         m_notifyCb(CAMERA2_MSG_AUTOFOCUS, newState, m_afTriggerId, 0, m_callbackCookie);
     m_serviceAfState = newState;
@@ -5703,6 +5839,8 @@ int ExynosCameraHWInterface2::GetAfStateForService()
 
 void ExynosCameraHWInterface2::SetAfMode(enum aa_afmode afMode)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     if (m_afMode != afMode) {
         if (m_IsAfModeUpdateRequired && m_afMode != AA_AFMODE_OFF) {
             m_afMode2 = afMode;
@@ -5721,6 +5859,8 @@ void ExynosCameraHWInterface2::SetAfMode(enum aa_afmode afMode)
 void ExynosCameraHWInterface2::m_setExifFixedAttribute(void)
 {
     char property[PROPERTY_VALUE_MAX];
+
+    ALOGV("DEBUG(%s)", __FUNCTION__);
 
     //2 0th IFD TIFF Tags
     //3 Maker
@@ -5786,6 +5926,8 @@ void ExynosCameraHWInterface2::m_setExifChangedAttribute(exif_attribute_t *exifI
 {
     camera2_dm *dm = &(currentEntry->shot.dm);
     camera2_ctl *ctl = &(currentEntry->shot.ctl);
+
+    ALOGV("DEBUG(%s)", __FUNCTION__);
 
     ALOGV("(%s): framecnt(%d) exp(%lld) iso(%d)", __FUNCTION__, ctl->request.frameCount, dm->sensor.exposureTime,dm->aa.isoValue );
     if (!ctl->request.frameCount)
@@ -6018,6 +6160,8 @@ void ExynosCameraHWInterface2::StreamThread::release()
 
 int ExynosCameraHWInterface2::StreamThread::findBufferIndex(void * bufAddr)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     int index;
     for (index = 0 ; index < m_parameters.numSvcBuffers ; index++) {
         if (m_parameters.svcBuffers[index].virt.extP[0] == bufAddr)
@@ -6028,6 +6172,8 @@ int ExynosCameraHWInterface2::StreamThread::findBufferIndex(void * bufAddr)
 
 int ExynosCameraHWInterface2::StreamThread::findBufferIndex(buffer_handle_t * bufHandle)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     int index;
     for (index = 0 ; index < m_parameters.numSvcBuffers ; index++) {
         if (m_parameters.svcBufHandle[index] == *bufHandle)
@@ -6038,6 +6184,8 @@ int ExynosCameraHWInterface2::StreamThread::findBufferIndex(buffer_handle_t * bu
 
 status_t ExynosCameraHWInterface2::StreamThread::attachSubStream(int stream_id, int priority)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     ALOGV("(%s): substream_id(%d)", __FUNCTION__, stream_id);
     int index, vacantIndex;
     bool vacancy = false;
@@ -6060,6 +6208,8 @@ status_t ExynosCameraHWInterface2::StreamThread::attachSubStream(int stream_id, 
 
 status_t ExynosCameraHWInterface2::StreamThread::detachSubStream(int stream_id)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     ALOGV("(%s): substream_id(%d)", __FUNCTION__, stream_id);
     int index;
     bool found = false;
@@ -6080,6 +6230,8 @@ status_t ExynosCameraHWInterface2::StreamThread::detachSubStream(int stream_id)
 
 int ExynosCameraHWInterface2::createIonClient(ion_client ionClient)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     if (ionClient == 0) {
         ionClient = ion_client_create();
         if (ionClient < 0) {
@@ -6092,6 +6244,8 @@ int ExynosCameraHWInterface2::createIonClient(ion_client ionClient)
 
 int ExynosCameraHWInterface2::deleteIonClient(ion_client ionClient)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     if (ionClient != 0) {
         if (ionClient > 0) {
             ion_client_destroy(ionClient);
@@ -6111,6 +6265,8 @@ int ExynosCameraHWInterface2::allocCameraMemory(ion_client ionClient, ExynosBuff
     int ret = 0;
     int i = 0;
     int flag = 0;
+
+    ALOGV("DEBUG(%s)", __FUNCTION__);
 
     if (ionClient == 0) {
         ALOGE("[%s] ionClient is zero (%d)\n", __FUNCTION__, ionClient);
@@ -6154,6 +6310,8 @@ void ExynosCameraHWInterface2::freeCameraMemory(ExynosBuffer *buf, int iMemoryNu
     int i = 0 ;
     int ret = 0;
 
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     for (i=0;i<iMemoryNum;i++) {
         if (buf->fd.extFd[i] != -1) {
             if (buf->virt.extP[i] != (char *)MAP_FAILED) {
@@ -6172,6 +6330,8 @@ void ExynosCameraHWInterface2::freeCameraMemory(ExynosBuffer *buf, int iMemoryNu
 
 void ExynosCameraHWInterface2::initCameraMemory(ExynosBuffer *buf, int iMemoryNum)
 {
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     int i =0 ;
     for (i=0;i<iMemoryNum;i++) {
         buf->virt.extP[i] = (char *)MAP_FAILED;
@@ -6352,7 +6512,7 @@ static int HAL2_device_get_metadata_vendor_tag_ops(const struct camera2_device*d
 
 static int HAL2_device_dump(const struct camera2_device *dev, int fd)
 {
-    ALOGV("DEBUG(%s):", __FUNCTION__);
+    ALOGD("DEBUG(%s):", __FUNCTION__);
     return obj(dev)->dump(fd);
 }
 
@@ -6362,14 +6522,14 @@ static int HAL2_device_dump(const struct camera2_device *dev, int fd)
 
 static int HAL2_getNumberOfCameras()
 {
-    ALOGV("(%s): returning 2", __FUNCTION__);
+    ALOGD("(%s): returning 2", __FUNCTION__);
     return 2;
 }
 
 
 static int HAL2_getCameraInfo(int cameraId, struct camera_info *info)
 {
-    ALOGV("DEBUG(%s): cameraID: %d", __FUNCTION__, cameraId);
+    ALOGD("DEBUG(%s): cameraID: %d", __FUNCTION__, cameraId);
     static camera_metadata_t * mCameraInfo[2] = {NULL, NULL};
 
     status_t res;
@@ -6439,6 +6599,8 @@ static int HAL2_camera_device_open(const struct hw_module_t* module,
     int cameraId = atoi(id);
     int openInvalid = 0;
 
+    ALOGV("DEBUG(%s)", __FUNCTION__);
+
     Mutex::Autolock lock(g_camera_mutex);
     if (g_camera_vaild) {
         ALOGE("ERR(%s): Can't open, other camera is in use", __FUNCTION__);
@@ -6465,10 +6627,12 @@ static int HAL2_camera_device_open(const struct hw_module_t* module,
     }
 
     g_cam2_device = (camera2_device_t *)malloc(sizeof(camera2_device_t));
-    ALOGV("g_cam2_device : 0x%08x", (unsigned int)g_cam2_device);
+    ALOGD("g_cam2_device : 0x%08x", (unsigned int)g_cam2_device);
 
-    if (!g_cam2_device)
+    if (!g_cam2_device) {
+        ALOGD("g_cam2_device error, returning -ENOMEM");
         return -ENOMEM;
+    }
 
     g_cam2_device->common.tag     = HARDWARE_DEVICE_TAG;
     g_cam2_device->common.version = CAMERA_DEVICE_API_VERSION_2_0;
@@ -6477,7 +6641,7 @@ static int HAL2_camera_device_open(const struct hw_module_t* module,
 
     g_cam2_device->ops = &camera2_device_ops;
 
-    ALOGV("DEBUG(%s):open camera2 %s", __FUNCTION__, id);
+    ALOGD("DEBUG(%s):open camera2 %s", __FUNCTION__, id);
 
     g_cam2_device->priv = new ExynosCameraHWInterface2(cameraId, g_cam2_device, g_camera2[cameraId], &openInvalid);
     if (!openInvalid) {

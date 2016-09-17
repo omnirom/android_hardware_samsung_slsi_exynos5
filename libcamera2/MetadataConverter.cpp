@@ -27,7 +27,7 @@
  *   Initial Release
  */
 
-//#define LOG_NDEBUG 0
+#define LOG_NDEBUG 0
 #define LOG_TAG "MetadataConverter"
 #include <utils/Log.h>
 
