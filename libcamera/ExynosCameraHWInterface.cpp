@@ -37,7 +37,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-//#define LOG_NDEBUG 0
+#define LOG_NDEBUG 0
 #define LOG_TAG "ExynosCameraHWInterface"
 #include <utils/Log.h>
 

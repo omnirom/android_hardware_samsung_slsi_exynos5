@@ -28,7 +28,7 @@
  *
  */
 
-//#define LOG_NDEBUG 0
+#define LOG_NDEBUG 0
 #define LOG_TAG "ExynosCamera2"
 #include <utils/Log.h>
 

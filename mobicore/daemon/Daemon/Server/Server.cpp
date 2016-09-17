@@ -37,7 +37,7 @@
 #include <string.h>
 #include <errno.h>
 
-//#define LOG_VERBOSE
+#define LOG_VERBOSE
 #include "log.h"
 
 //------------------------------------------------------------------------------

@@ -35,6 +35,8 @@
 #include <ion/ion.h>
 #include <linux/ion.h>
 
+#define LOG_NDEBUG 0
+
 /*****************************************************************************/
 
 static int gralloc_map(gralloc_module_t const* module, buffer_handle_t handle)

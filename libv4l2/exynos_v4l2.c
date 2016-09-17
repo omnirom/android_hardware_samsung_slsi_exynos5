@@ -38,7 +38,7 @@
 
 #include "exynos_v4l2.h"
 
-//#define LOG_NDEBUG 0
+#define LOG_NDEBUG 0
 #define LOG_TAG "libexynosv4l2"
 #include <utils/Log.h>
 #include "Exynos_log.h"
@@ -56,6 +56,7 @@
 
 static bool __v4l2_check_buf_type(enum v4l2_buf_type type)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     bool supported;
 
     switch (type) {
@@ -72,11 +73,13 @@ static bool __v4l2_check_buf_type(enum v4l2_buf_type type)
         break;
     }
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return supported;
 }
 
 static int __v4l2_open(const char *filename, int oflag, va_list ap)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     mode_t mode = 0;
     int fd;
 
@@ -85,11 +88,13 @@ static int __v4l2_open(const char *filename, int oflag, va_list ap)
 
     fd = open(filename, oflag, mode);
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return fd;
 }
 
 int exynos_v4l2_open(const char *filename, int oflag, ...)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     va_list ap;
     int fd;
 
@@ -101,11 +106,13 @@ int exynos_v4l2_open(const char *filename, int oflag, ...)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return fd;
 }
 
 int exynos_v4l2_open_devname(const char *devname, int oflag, ...)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     bool found = false;
     int fd = -1;
     struct stat s;
@@ -169,11 +176,13 @@ int exynos_v4l2_open_devname(const char *devname, int oflag, ...)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return fd;
 }
 
 int exynos_v4l2_close(int fd)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     int ret = -1;
 
     Exynos_v4l2_In();
@@ -185,11 +194,13 @@ int exynos_v4l2_close(int fd)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 bool exynos_v4l2_enuminput(int fd, int index, char *input_name_buf)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     int ret = -1;
     struct v4l2_input input;
 
@@ -213,11 +224,13 @@ bool exynos_v4l2_enuminput(int fd, int index, char *input_name_buf)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return true;
 }
 
 int exynos_v4l2_s_input(int fd, int index)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     int ret = -1;
     struct v4l2_input input;
 
@@ -238,11 +251,13 @@ int exynos_v4l2_s_input(int fd, int index)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 bool exynos_v4l2_querycap(int fd, unsigned int need_caps)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     struct v4l2_capability cap;
     int ret;
 
@@ -277,11 +292,13 @@ bool exynos_v4l2_querycap(int fd, unsigned int need_caps)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return true;
 }
 
 bool exynos_v4l2_enum_fmt(int fd, enum v4l2_buf_type type, unsigned int fmt)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     struct v4l2_fmtdesc fmtdesc;
     int found = 0;
 
@@ -307,11 +324,13 @@ bool exynos_v4l2_enum_fmt(int fd, enum v4l2_buf_type type, unsigned int fmt)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT: %s", __FUNCTION__);
     return true;
 }
 
 int exynos_v4l2_g_fmt(int fd, struct v4l2_format *fmt)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     int ret = -1;
 
     Exynos_v4l2_In();
@@ -339,11 +358,13 @@ int exynos_v4l2_g_fmt(int fd, struct v4l2_format *fmt)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 static int __v4l2_s_fmt(int fd, unsigned int request, struct v4l2_format *fmt)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     int ret = -1;
 
     Exynos_v4l2_In();
@@ -375,21 +396,25 @@ static int __v4l2_s_fmt(int fd, unsigned int request, struct v4l2_format *fmt)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 int exynos_v4l2_try_fmt(int fd, struct v4l2_format *fmt)
 {
+    ALOGV("%s", __FUNCTION__);
     return __v4l2_s_fmt(fd, VIDIOC_TRY_FMT, fmt);
 }
 
 int exynos_v4l2_s_fmt(int fd, struct v4l2_format *fmt)
 {
+    ALOGV("%s", __FUNCTION__);
     return __v4l2_s_fmt(fd, VIDIOC_S_FMT, fmt);
 }
 
 int exynos_v4l2_reqbufs(int fd, struct v4l2_requestbuffers *req)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     int ret = -1;
     unsigned int count;
 
@@ -431,11 +456,13 @@ int exynos_v4l2_reqbufs(int fd, struct v4l2_requestbuffers *req)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 int exynos_v4l2_querybuf(int fd, struct v4l2_buffer *buf)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     int ret = -1;
 
     Exynos_v4l2_In();
@@ -469,11 +496,13 @@ int exynos_v4l2_querybuf(int fd, struct v4l2_buffer *buf)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 int exynos_v4l2_qbuf(int fd, struct v4l2_buffer *buf)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     int ret = -1;
 
     Exynos_v4l2_In();
@@ -508,11 +537,13 @@ int exynos_v4l2_qbuf(int fd, struct v4l2_buffer *buf)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 int exynos_v4l2_dqbuf(int fd, struct v4l2_buffer *buf)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     int ret = -1;
 
     Exynos_v4l2_In();
@@ -547,11 +578,13 @@ int exynos_v4l2_dqbuf(int fd, struct v4l2_buffer *buf)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 int exynos_v4l2_streamon(int fd, enum v4l2_buf_type type)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     int ret = -1;
 
     Exynos_v4l2_In();
@@ -574,11 +607,13 @@ int exynos_v4l2_streamon(int fd, enum v4l2_buf_type type)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 int exynos_v4l2_streamoff(int fd, enum v4l2_buf_type type)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     int ret = -1;
 
     Exynos_v4l2_In();
@@ -601,11 +636,13 @@ int exynos_v4l2_streamoff(int fd, enum v4l2_buf_type type)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 int exynos_v4l2_cropcap(int fd, struct v4l2_cropcap *crop)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     int ret = -1;
 
     Exynos_v4l2_In();
@@ -633,11 +670,13 @@ int exynos_v4l2_cropcap(int fd, struct v4l2_cropcap *crop)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 int exynos_v4l2_g_crop(int fd, struct v4l2_crop *crop)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     int ret = -1;
 
     Exynos_v4l2_In();
@@ -665,11 +704,13 @@ int exynos_v4l2_g_crop(int fd, struct v4l2_crop *crop)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 int exynos_v4l2_s_crop(int fd, struct v4l2_crop *crop)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     int ret = -1;
 
     Exynos_v4l2_In();
@@ -697,11 +738,13 @@ int exynos_v4l2_s_crop(int fd, struct v4l2_crop *crop)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 int exynos_v4l2_g_ctrl(int fd, unsigned int id, int *value)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     int ret = -1;
     struct v4l2_control ctrl;
 
@@ -724,11 +767,13 @@ int exynos_v4l2_g_ctrl(int fd, unsigned int id, int *value)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 int exynos_v4l2_s_ctrl(int fd, unsigned int id, int value)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     int ret = -1;
     struct v4l2_control ctrl;
 
@@ -750,11 +795,13 @@ int exynos_v4l2_s_ctrl(int fd, unsigned int id, int value)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 int exynos_v4l2_g_parm(int fd, struct v4l2_streamparm *streamparm)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     int ret = -1;
 
     Exynos_v4l2_In();
@@ -777,11 +824,13 @@ int exynos_v4l2_g_parm(int fd, struct v4l2_streamparm *streamparm)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 int exynos_v4l2_s_parm(int fd, struct v4l2_streamparm *streamparm)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     int ret = -1;
 
     Exynos_v4l2_In();
@@ -804,11 +853,13 @@ int exynos_v4l2_s_parm(int fd, struct v4l2_streamparm *streamparm)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 int exynos_v4l2_g_ext_ctrl(int fd, struct v4l2_ext_controls *ctrl)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     int ret = -1;
 
     Exynos_v4l2_In();
@@ -829,11 +880,13 @@ int exynos_v4l2_g_ext_ctrl(int fd, struct v4l2_ext_controls *ctrl)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }
 
 int exynos_v4l2_s_ext_ctrl(int fd, struct v4l2_ext_controls *ctrl)
 {
+    ALOGV("ENTER %s", __FUNCTION__);
     int ret = -1;
 
     Exynos_v4l2_In();
@@ -854,5 +907,6 @@ int exynos_v4l2_s_ext_ctrl(int fd, struct v4l2_ext_controls *ctrl)
 
     Exynos_v4l2_Out();
 
+    ALOGV("EXIT %s", __FUNCTION__);
     return ret;
 }

@@ -47,6 +47,7 @@
 #define ION_HEAP_CHUNK_ID           6
 #define MB_1 (1024*1024)
 
+#define LOG_NDEBUG 0
 
 //these are no longer defined, but we DO support them, so let's keep that knowledge alive for potential binary-blob users
 #define HAL_PIXEL_FORMAT_sRGB_A_8888   12

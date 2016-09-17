@@ -39,7 +39,7 @@
  *
  */
 
-//#define LOG_NDEBUG 0
+#define LOG_NDEBUG 0
 #include "exynos_gsc_utils.h"
 #include "content_protect.h"
 

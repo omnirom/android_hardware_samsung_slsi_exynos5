@@ -36,7 +36,7 @@
 
 #include "exynos_v4l2.h"
 
-//#define LOG_NDEBUG 0
+#define LOG_NDEBUG 0
 #define LOG_TAG "libexynosv4l2-subdev"
 #include <utils/Log.h>
 

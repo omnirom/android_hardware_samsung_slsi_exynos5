@@ -30,6 +30,8 @@
 
 #include <EGL/egl.h>
 
+#define LOG_NDEBUG 0
+
 #define HWC_REMOVE_DEPRECATED_VERSIONS 1
 
 #include <cutils/compiler.h>
