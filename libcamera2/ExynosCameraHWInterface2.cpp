@@ -31,7 +31,7 @@
  *
  */
 
-//#define LOG_NDEBUG 0
+#define LOG_NDEBUG 0
 #define LOG_TAG "ExynosCameraHAL2"
 #include <sys/time.h>
 #include <utils/Log.h>
@@ -1476,7 +1476,9 @@ void ExynosCameraHWInterface2::StartSCCThread(bool threadExists)
 void ExynosCameraHWInterface2::StartISP()
 {
     ALOGV("== stream_on :: isp");
+    ALOGV("cam_int_streamon");
     cam_int_streamon(&(m_camera_info.isp));
+    ALOGV("exynos_v4l2_s_ctrl");
     exynos_v4l2_s_ctrl(m_camera_info.sensor.fd, V4L2_CID_IS_S_STREAM, IS_ENABLE_STREAM);
 }
 
@@ -6352,7 +6354,7 @@ static int HAL2_device_get_metadata_vendor_tag_ops(const struct camera2_device*d
 
 static int HAL2_device_dump(const struct camera2_device *dev, int fd)
 {
-    ALOGV("DEBUG(%s):", __FUNCTION__);
+    ALOGD("DEBUG(%s):", __FUNCTION__);
     return obj(dev)->dump(fd);
 }
 
@@ -6362,14 +6364,14 @@ static int HAL2_device_dump(const struct camera2_device *dev, int fd)
 
 static int HAL2_getNumberOfCameras()
 {
-    ALOGV("(%s): returning 2", __FUNCTION__);
+    ALOGD("(%s): returning 2", __FUNCTION__);
     return 2;
 }
 
 
 static int HAL2_getCameraInfo(int cameraId, struct camera_info *info)
 {
-    ALOGV("DEBUG(%s): cameraID: %d", __FUNCTION__, cameraId);
+    ALOGD("DEBUG(%s): cameraID: %d", __FUNCTION__, cameraId);
     static camera_metadata_t * mCameraInfo[2] = {NULL, NULL};
 
     status_t res;
@@ -6465,10 +6467,12 @@ static int HAL2_camera_device_open(const struct hw_module_t* module,
     }
 
     g_cam2_device = (camera2_device_t *)malloc(sizeof(camera2_device_t));
-    ALOGV("g_cam2_device : 0x%08x", (unsigned int)g_cam2_device);
+    ALOGD("g_cam2_device : 0x%08x", (unsigned int)g_cam2_device);
 
-    if (!g_cam2_device)
+    if (!g_cam2_device) {
+        ALOGD("g_cam2_device error, returning -ENOMEM");
         return -ENOMEM;
+    }
 
     g_cam2_device->common.tag     = HARDWARE_DEVICE_TAG;
     g_cam2_device->common.version = CAMERA_DEVICE_API_VERSION_2_0;
@@ -6477,7 +6481,7 @@ static int HAL2_camera_device_open(const struct hw_module_t* module,
 
     g_cam2_device->ops = &camera2_device_ops;
 
-    ALOGV("DEBUG(%s):open camera2 %s", __FUNCTION__, id);
+    ALOGD("DEBUG(%s):open camera2 %s", __FUNCTION__, id);
 
     g_cam2_device->priv = new ExynosCameraHWInterface2(cameraId, g_cam2_device, g_camera2[cameraId], &openInvalid);
     if (!openInvalid) {
