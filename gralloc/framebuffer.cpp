@@ -41,6 +41,8 @@
 
 #include "gralloc_priv.h"
 
+#define LOG_NDEBUG 0
+
 /*****************************************************************************/
 
 // numbers of buffers for page flipping

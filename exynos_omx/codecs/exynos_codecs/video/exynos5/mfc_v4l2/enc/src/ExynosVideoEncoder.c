@@ -43,7 +43,7 @@
 #include "ExynosVideoApi.h"
 #include "ExynosVideoEnc.h"
 
-/* #define LOG_NDEBUG 0 */
+#define LOG_NDEBUG 0
 #define LOG_TAG "ExynosVideoEncoder"
 #include <utils/Log.h>
 
