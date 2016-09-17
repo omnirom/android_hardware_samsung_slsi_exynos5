@@ -6352,7 +6352,7 @@ static int HAL2_device_get_metadata_vendor_tag_ops(const struct camera2_device*d
 
 static int HAL2_device_dump(const struct camera2_device *dev, int fd)
 {
-    ALOGV("DEBUG(%s):", __FUNCTION__);
+    ALOGD("DEBUG(%s):", __FUNCTION__);
     return obj(dev)->dump(fd);
 }
 
@@ -6362,14 +6362,14 @@ static int HAL2_device_dump(const struct camera2_device *dev, int fd)
 
 static int HAL2_getNumberOfCameras()
 {
-    ALOGV("(%s): returning 2", __FUNCTION__);
+    ALOGD("(%s): returning 2", __FUNCTION__);
     return 2;
 }
 
 
 static int HAL2_getCameraInfo(int cameraId, struct camera_info *info)
 {
-    ALOGV("DEBUG(%s): cameraID: %d", __FUNCTION__, cameraId);
+    ALOGD("DEBUG(%s): cameraID: %d", __FUNCTION__, cameraId);
     static camera_metadata_t * mCameraInfo[2] = {NULL, NULL};
 
     status_t res;
@@ -6465,9 +6465,10 @@ static int HAL2_camera_device_open(const struct hw_module_t* module,
     }
 
     g_cam2_device = (camera2_device_t *)malloc(sizeof(camera2_device_t));
-    ALOGV("g_cam2_device : 0x%08x", (unsigned int)g_cam2_device);
+    ALOGD("g_cam2_device : 0x%08x", (unsigned int)g_cam2_device);
 
-    if (!g_cam2_device)
+    if (!g_cam2_device) {
+        ALOGD("g_cam2_device error, returning -ENOMEM");
         return -ENOMEM;
 
     g_cam2_device->common.tag     = HARDWARE_DEVICE_TAG;
@@ -6477,7 +6478,7 @@ static int HAL2_camera_device_open(const struct hw_module_t* module,
 
     g_cam2_device->ops = &camera2_device_ops;
 
-    ALOGV("DEBUG(%s):open camera2 %s", __FUNCTION__, id);
+    ALOGD("DEBUG(%s):open camera2 %s", __FUNCTION__, id);
 
     g_cam2_device->priv = new ExynosCameraHWInterface2(cameraId, g_cam2_device, g_camera2[cameraId], &openInvalid);
     if (!openInvalid) {
