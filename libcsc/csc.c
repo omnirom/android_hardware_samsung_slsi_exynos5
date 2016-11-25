@@ -56,8 +56,8 @@
 
 #ifdef ENABLE_G2D
 #include <fcntl.h>
+#include <linux/fimg2d.h>
 #include <sys/ioctl.h>
-#include "fimg2d.h"
 
 typedef struct
 {
